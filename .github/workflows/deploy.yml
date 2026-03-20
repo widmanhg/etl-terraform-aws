@@ -7,7 +7,7 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,9 +28,9 @@ jobs:
         working-directory: ./terraform
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var="bucket_suffix=${{ secrets.BUCKET_SUFFIX }}"
         working-directory: ./terraform
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var="bucket_suffix=${{ secrets.BUCKET_SUFFIX }}"
         working-directory: ./terraform
