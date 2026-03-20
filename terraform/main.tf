@@ -8,12 +8,11 @@ terraform {
     }
   }
 
-  # Opcional: backend remoto en S3
-  # backend "s3" {
-  #   bucket = "mi-terraform-state"
-  #   key    = "crypto-etl/terraform.tfstate"
-  #   region = "us-east-1"
-  # }
+  backend "s3" {
+    bucket = "crypto-etl-tfstate-gerardo"
+    key    = "crypto-etl/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
