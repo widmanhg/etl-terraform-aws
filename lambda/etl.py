@@ -8,9 +8,6 @@ from datetime import datetime, timezone
 
 s3 = boto3.client("s3")
 
-RAW_BUCKET = os.environ["RAW_BUCKET"]
-PROCESSED_BUCKET = os.environ["PROCESSED_BUCKET"]
-
 
 def fetch_crypto_data() -> list[dict]:
     """Llama a CoinGecko API y retorna top 100 cryptos."""
@@ -25,6 +22,7 @@ def fetch_crypto_data() -> list[dict]:
 
 def save_raw(data: list[dict], date_str: str) -> str:
     """Guarda JSON crudo en S3 particionado por fecha."""
+    RAW_BUCKET = os.environ["RAW_BUCKET"]  # ← movido aquí
     key = f"crypto/year={date_str[:4]}/month={date_str[5:7]}/day={date_str[8:10]}/raw_{date_str}.json"
     s3.put_object(
         Bucket=RAW_BUCKET,
@@ -61,6 +59,7 @@ def transform(data: list[dict], date_str: str) -> list[dict]:
 
 def save_processed(data: list[dict], date_str: str) -> str:
     """Guarda CSV procesado en S3 particionado por fecha."""
+    PROCESSED_BUCKET = os.environ["PROCESSED_BUCKET"]  # ← movido aquí
     if not data:
         return ""
 
@@ -86,19 +85,15 @@ def lambda_handler(event, context):
     print(f"Starting ETL pipeline for date: {date_str}")
 
     try:
-        # Extract
         print("Extracting data from CoinGecko...")
         raw_data = fetch_crypto_data()
         print(f"Fetched {len(raw_data)} coins")
 
-        # Load raw
         raw_key = save_raw(raw_data, date_str)
 
-        # Transform
         print("Transforming data...")
         processed_data = transform(raw_data, date_str)
 
-        # Load processed
         processed_key = save_processed(processed_data, date_str)
 
         return {
@@ -115,10 +110,3 @@ def lambda_handler(event, context):
     except Exception as e:
         print(f"ERROR en el pipeline: {str(e)}")
         raise e
-
-
-
-# boto3 ya viene incluido en el runtime de Lambda
-# No necesitas instalar nada extra para este pipeline
-# Si agregas pandas u otras libs, ponlas aquí:
-# pandas==2.1.0
