@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": {"message": "ETL completado exitosamente", "date": "2026-03-20", "records_processed": 100, "raw_key": "crypto/year=2026/month=03/day=20/raw_2026-03-20.json", "processed_key": "crypto/year=2026/month=03/day=20/processed_2026-03-20.csv"}}
